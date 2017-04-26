@@ -19,7 +19,7 @@ namespace ManyWindows.Shapes
         {
             
             g.FillEllipse(brush, point.X,point.Y,radius*2,radius*2);
-            g.DrawEllipse(pen, point.X, point.Y, radius * 2, radius * 2);
+         //   g.DrawEllipse(pen, point.X, point.Y, radius * 2, radius * 2);
         }
         public override bool isInside(float X, float Y)
         {

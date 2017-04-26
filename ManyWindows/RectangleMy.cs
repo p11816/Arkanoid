@@ -9,8 +9,8 @@ namespace ManyWindows.Shapes
 {
     class RectangleMy : Shape
     {
-        float width;
-        float height;
+        public float width;
+        public float height;
 
         public RectangleMy(float x, float y, float width, float height)
         {
