@@ -22,7 +22,7 @@ namespace ManyWindows.Shapes
         public override void Paint(System.Drawing.Graphics g)
         {
             g.FillRectangle(brush, point.X, point.Y, width, height);
-            g.DrawRectangle(pen, point.X, point.Y, width, height);
+           // g.DrawRectangle(pen, point.X, point.Y, width, height);
         }
 
         public override bool isInside(float X, float Y)
