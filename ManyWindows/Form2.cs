@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Timers;
 
 namespace ManyWindows
 {
@@ -17,6 +18,7 @@ namespace ManyWindows
 
         List<Shape> shapes = new List<Shape>();
         Image images = Image.FromFile("ImageStage1.png");
+        bool path = true;
 
         public Form1()
         {
@@ -39,6 +41,42 @@ namespace ManyWindows
             shapes.AddRange(m.firstMap());
             // вставили фон на форме
             this.BackgroundImage = images;
+            moveBall();
+            
+        }
+
+        
+        // перемещение шарика
+        public void moveBall()
+        {
+            // устанавливаем метод обратного вызова
+            TimerCallback tm = new TimerCallback(Move);
+            // создаем таймер
+            System.Threading.Timer timer = new System.Threading.Timer(tm, 0, 0, 15);
+           
+        }
+
+    
+        private void Move(object obj)
+        {
+            if (path)
+            {
+                shapes[3].point.Y += 8;
+                if (shapes[3].point.Y >= this.ClientSize.Height)
+                {
+                    path = false;
+                }
+            }
+            else
+            {
+                shapes[3].point.Y -= 8;
+                if (shapes[3].point.Y <= 0)
+                {
+                    path = true;
+                }
+
+            }
+            this.Invalidate();
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -54,12 +92,13 @@ namespace ManyWindows
             // создаём холст - canvas
             Graphics g = e.Graphics;            // сдесь получаем обьект через союытие(по другому не работает)
             //this.Invalidate();
-
+           
             // рисуем все фигуры
             foreach (Shape s in this.shapes)
             {
                 s.Paint(g);
             }
+            
         }
         
         private void Form1_Resize(object sender, EventArgs e)
@@ -83,6 +122,7 @@ namespace ManyWindows
            // движение биты
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
+            
             if (e.X < 60)
             {
                 shapes[0].point.X = 10;
@@ -97,7 +137,7 @@ namespace ManyWindows
             }
             else
             {
-                Region r = new Region(new Rectangle(0, 0, 1000, 500));
+                //Region r = new Region(new Rectangle(0, 0, 1000, 500));
                 shapes[0].point.X = e.X - 50;
                 shapes[1].point.X = e.X - 60;
                 shapes[2].point.X = e.X + 40;
