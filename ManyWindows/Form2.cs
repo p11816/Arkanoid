@@ -19,6 +19,8 @@ namespace ManyWindows
         List<Shape> shapes = new List<Shape>();
         Image images = Image.FromFile("ImageStage1.png");
         bool path = true;
+        int xStep = 0;
+        int yStep = 8;
 
         public Form1()
         {
@@ -41,42 +43,171 @@ namespace ManyWindows
             shapes.AddRange(m.firstMap());
             // вставили фон на форме
             this.BackgroundImage = images;
-            moveBall();
-            
         }
 
-        
-        // перемещение шарика
-        public void moveBall()
+ 
+        private void Move()
         {
-            // устанавливаем метод обратного вызова
-            TimerCallback tm = new TimerCallback(Move);
-            // создаем таймер
-            System.Threading.Timer timer = new System.Threading.Timer(tm, 0, 0, 15);
-           
-        }
 
-    
-        private void Move(object obj)
-        {
-            if (path)
-            {
-                shapes[3].point.Y += 8;
-                if (shapes[3].point.Y >= this.ClientSize.Height)
-                {
-                    path = false;
-                }
-            }
-            else
-            {
-                shapes[3].point.Y -= 8;
-                if (shapes[3].point.Y <= 0)
-                {
-                    path = true;
-                }
+            //////////////////
+                shapes[3].point.Y += yStep;
+                shapes[3].point.X += xStep;
 
-            }
             this.Invalidate();
+        }
+
+        // попадаем ли в биту?
+        private void ShootByte()
+        {
+       
+            // так же нужно определить в какое место биты мы попали
+            //////////////////////
+            // здесь попадаем в центр
+            if (shapes[3].point.Y + ((Circle)shapes[3]).radius + 8 > shapes[0].point.Y  // по Y
+                    && shapes[3].point.X + ((Circle)shapes[3]).radius > (shapes[0].point.X + 40)
+                    && shapes[3].point.X + ((Circle)shapes[3]).radius < shapes[0].point.X + ((RectangleMy)shapes[0]).width - 40)
+            {
+                // тоесть движемся прямо вверх(на 8 пикселей)
+                xStep = 0;
+                yStep = -8;
+            }
+            else if (shapes[3].point.Y + ((Circle)shapes[3]).radius + 8 > shapes[0].point.Y  // по Y
+                   && shapes[3].point.X + ((Circle)shapes[3]).radius > (shapes[0].point.X + 60)
+                   && shapes[3].point.X + ((Circle)shapes[3]).radius < shapes[0].point.X + ((RectangleMy)shapes[0]).width - 20)
+            {
+                // тоесть движемся вверх вправо по 60 градусов
+                xStep = 4;
+                yStep = -7;
+            }
+            else if (shapes[3].point.Y + ((Circle)shapes[3]).radius + 8 > shapes[0].point.Y  // по Y
+                   && shapes[3].point.X + ((Circle)shapes[3]).radius > (shapes[0].point.X + 80)
+                   && shapes[3].point.X + ((Circle)shapes[3]).radius < shapes[0].point.X + ((RectangleMy)shapes[0]).width)
+            {
+                // тоесть движемся прямо вправо под 45 градусов
+                xStep = 6;
+                yStep = -6;
+            }
+            else if (shapes[3].point.Y + ((Circle)shapes[3]).radius + 8 > shapes[0].point.Y  // по Y
+                   && shapes[3].point.X + ((Circle)shapes[3]).radius > (shapes[0].point.X + 20)
+                   && shapes[3].point.X + ((Circle)shapes[3]).radius < shapes[0].point.X + ((RectangleMy)shapes[0]).width - 60)
+            {
+                // тоесть движемся вверх влево под 60 градусов
+                xStep = -4;
+                yStep = -7;
+            }
+            else if (shapes[3].point.Y + ((Circle)shapes[3]).radius + 8 > shapes[0].point.Y  // по Y
+                   && shapes[3].point.X + ((Circle)shapes[3]).radius > (shapes[0].point.X)
+                   && shapes[3].point.X + ((Circle)shapes[3]).radius < shapes[0].point.X + ((RectangleMy)shapes[0]).width - 80)
+            {
+                // тоесть движемся вверх влево под 45 градусов
+                xStep = -6;
+                yStep = -6;
+            }
+        }
+
+        // функция для отскока от стенок
+        private void RebounWalls()
+        {
+            // у нас три стены 
+            // левая
+            if (shapes[3].point.X < 0 && xStep == -4 && yStep == -7)    // тоесть летит снизу под углом 60
+            {
+                // меняем траекторию
+                xStep = 4;
+                yStep = -7;
+            }
+            else if (shapes[3].point.X < 0 && xStep == -6 && yStep == -6)    // тоесть летит снизу под углом 45
+            {
+                // меняем траекторию
+                xStep = 6;
+                yStep = -6;
+            }
+            else if (shapes[3].point.X < 0 && xStep == -4 && yStep == 7)    // тоесть летит сверху под углом 30
+            {
+                // меняем траекторию
+                xStep = 4;
+                yStep = 7;
+            }
+            else if (shapes[3].point.X < 0 && xStep == -6 && yStep == 6)    // тоесть летит сверху под углом 45
+            {
+                // меняем траекторию
+                xStep = 6;
+                yStep = 6;
+            }
+            ////////////////////////////////////////////////////////////////////////////////
+            // правая стена
+            else if (shapes[3].point.X + ((Circle)shapes[3]).radius * 2 > this.ClientSize.Width  && xStep == 6 && yStep == -6)    // тоесть летит снизу под углом 45
+            {
+                // меняем траекторию
+                xStep = -6;
+                yStep = -6;
+            }
+            else if (shapes[3].point.X + ((Circle)shapes[3]).radius * 2 > this.ClientSize.Width && xStep == 4 && yStep == -7)    // тоесть летит снизу под углом 60
+            {
+                // меняем траекторию
+                xStep = -4;
+                yStep = -7;
+            }
+            else if (shapes[3].point.X + ((Circle)shapes[3]).radius * 2 > this.ClientSize.Width && xStep == 4 && yStep == 7)    // тоесть летит сверху под углом 30
+            {
+                // меняем траекторию
+                xStep = -4;
+                yStep = 7;
+            }
+            else if (shapes[3].point.X + ((Circle)shapes[3]).radius * 2 > this.ClientSize.Width && xStep == 6 && yStep == 6)    // тоесть летит сверху под углом 45
+            {
+                // меняем траекторию
+                xStep = -6;
+                yStep = 6;
+            }
+            ////////////////////////////////////////////////////////////////////////////////
+            // теперь отскок от верхней стены
+            else if (shapes[3].point.Y < 0 && xStep == 0 && yStep == -8)    // тоесть прямой отскок
+            {
+                // меняем траекторию
+                xStep = 0;
+                yStep = 8;
+            }
+            else if (shapes[3].point.Y < 0 && xStep == 4 && yStep == -7)    // тоесть отскок в 60 градусов в право
+            {
+                // меняем траекторию
+                xStep = 4;
+                yStep = 7;
+            }
+            else if (shapes[3].point.Y < 0 && xStep == -4 && yStep == -7)    // тоесть отскок в 60 градусов в влево
+            {
+                // меняем траекторию
+                xStep = -4;
+                yStep = 7;
+            }
+            else if (shapes[3].point.Y < 0 && xStep == 6 && yStep == -6)    // тоесть отскок в 45 градусов в вправо
+            {
+                // меняем траекторию
+                xStep = 6;
+                yStep = 6;
+            }
+            else if (shapes[3].point.Y < 0 && xStep == -6 && yStep == -6)    // тоесть отскок в 45 градусов в лево
+            {
+                // меняем траекторию
+                xStep = -6;
+                yStep = 6;
+            }
+        }
+
+        // передвижение шарика
+        private void NewMoveShare()
+        {
+
+            // 2 что нужно определить это то что мы попали в ракетку, а дальше в какое место ракетки мы попали
+            // от этого будет зависить угол передвижения мячика
+            if (shapes[3].point.Y > this.ClientSize.Height)
+            {
+                timer1.Enabled = false;
+                MessageBox.Show("Game Over");
+            }
+            ShootByte();
+            RebounWalls();
+            Move();
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -119,17 +250,19 @@ namespace ManyWindows
             }
         }
 
-           // движение биты
-        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
-            
-            if (e.X < 60)
+            // движение шарика
+            NewMoveShare();
+
+            // движение биты
+            if (MousePosition.X - this.Location.X - 7 < 60)
             {
                 shapes[0].point.X = 10;
                 shapes[1].point.X = 0;
                 shapes[2].point.X = 100;
             }
-            else if (e.X > this.ClientSize.Width - 60)
+            else if (MousePosition.X - this.Location.X - 7 > this.ClientSize.Width - 60)
             {
                 shapes[0].point.X = this.ClientSize.Width - 110;
                 shapes[1].point.X = this.ClientSize.Width - 120;
@@ -138,12 +271,12 @@ namespace ManyWindows
             else
             {
                 //Region r = new Region(new Rectangle(0, 0, 1000, 500));
-                shapes[0].point.X = e.X - 50;
-                shapes[1].point.X = e.X - 60;
-                shapes[2].point.X = e.X + 40;
-               // Graphics g = this.CreateGraphics();
-               // shapes[0].Paint(g);
-               // this.Update();
+                shapes[0].point.X = MousePosition.X - this.Location.X - 7 - 50;
+                shapes[1].point.X = MousePosition.X - this.Location.X - 7 - 60;
+                shapes[2].point.X = MousePosition.X - this.Location.X - 7 + 40;
+                // Graphics g = this.CreateGraphics();
+                // shapes[0].Paint(g);
+                // this.Update();
             }
             this.Invalidate();
         }

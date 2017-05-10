@@ -8,7 +8,7 @@ namespace ManyWindows.Shapes
 {
     class Circle: Shape
     {
-        float radius;
+        public float radius;
 
         public Circle(float x, float y, float r)
         {
