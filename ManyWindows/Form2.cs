@@ -17,10 +17,9 @@ namespace ManyWindows
     {
 
         List<Shape> shapes = new List<Shape>();
-        Image images = Image.FromFile("ImageStage1.png");
-        bool path = true;
+        Image images = Image.FromFile("../../ImageStage1.png");
         int xStep = 0;
-        int yStep = 8;
+        int yStep = -8;
 
         public Form1()
         {
@@ -194,6 +193,7 @@ namespace ManyWindows
             }
         }
 
+
         // передвижение шарика
         private void NewMoveShare()
         {
@@ -204,10 +204,22 @@ namespace ManyWindows
             {
                 timer1.Enabled = false;
                 MessageBox.Show("Game Over");
+                if (MessageBox.Show("Continue the game?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    shapes[3].point = new PointF(500, 400);
+                    xStep = 0;
+                    yStep = -8;
+                }
+                else
+                {
+                    this.Close();
+                }
+                
+
             }
-            ShootByte();
-            RebounWalls();
-            Move();
+            ShootByte();        // функция отскока от ракетки
+            RebounWalls();      // отскоко от стен
+            Move();             // передвижени по назначенной траектории
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
@@ -239,7 +251,7 @@ namespace ManyWindows
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
-
+            timer1.Enabled = true;
             foreach (Shape s in this.shapes)
             {
                 if (s.isInside(e.X, e.Y))
